@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="AlbumApp:Web" />
+    </artifacts-to-build>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="76b09159-ab22-4146-90ec-3e06d556b2e7" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../SwaggerAPI/.idea/uiDesigner.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/WEB-INF/web.xml" beforeDir="false" afterPath="$PROJECT_DIR$/web/WEB-INF/web.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Server/UsersthekeOneDriveDesktopCS6650Assignment01Server" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/.idea/artifacts/Servlet_Web.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/.idea/artifacts/Servlet_Web_exploded.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/out/artifacts/Servlet_Web/Servlet_Web.war" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/out/artifacts/Servlet_Web_exploded/WEB-INF/lib/gson-fire-1.8.3.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/out/artifacts/Servlet_Web_exploded/WEB-INF/lib/jaxb-core-2.2.11.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/out/artifacts/Servlet_Web_exploded/WEB-INF/lib/jaxb-impl-2.2.11.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/out/artifacts/Servlet_Web_exploded/WEB-INF/lib/logging-interceptor-2.7.5.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/out/artifacts/Servlet_Web_exploded/WEB-INF/lib/okhttp-2.7.5.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/out/artifacts/Servlet_Web_exploded/WEB-INF/lib/okio-1.6.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/out/artifacts/Servlet_Web_exploded/WEB-INF/lib/swagger-annotations-2.0.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/out/artifacts/Servlet_Web_exploded/WEB-INF/lib/swagger-java-client-1.0.0.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/out/artifacts/Servlet_Web_exploded/WEB-INF/lib/threetenbp-1.3.5.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/src/main/java/AlbumServlet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/src/main/java/Model/Album.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/src/main/java/Model/ErrorMsg.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/target/classes/AlbumServlet$Endpoint.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/target/classes/AlbumServlet.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/target/classes/Model/Album.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/target/classes/Model/ErrorMsg.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Servlet/web/WEB-INF/web.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SwaggerAPI/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../SwaggerAPI/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SwaggerAPI/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SwaggerAPI/src/main/java/ClientPart1/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SwaggerAPI/src/main/java/RunningThread.java" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Servlet" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2WVkKLdE88S49GmVt0Tunatdq42" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.1484375&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="AlbumsApp" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="AlbumsApp" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="76b09159-ab22-4146-90ec-3e06d556b2e7" name="Changes" comment="" />
+      <created>1696825071019</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1696825071019</updated>
+      <workItem from="1696825072150" duration="1706000" />
+      <workItem from="1696828544995" duration="607000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
