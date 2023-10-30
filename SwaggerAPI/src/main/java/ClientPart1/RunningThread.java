@@ -32,30 +32,27 @@ public class RunningThread implements Runnable{
         for (int i = 0; i < 1000; i++) {
             try {
                 performGetRequest();
-            } catch (Exception e) {
-                System.err.println("GET failed");
-            }
-                        System.out.println(success);
-            System.out.println(failure);
-        }
-        for (int i = 0; i < 1000; i++) {
-            long start = System.nanoTime();
-            try {
                 performPostRequest();
             } catch (Exception e) {
-                System.err.println("POST failed");
+                System.err.println("Request failed");
             }
-                        System.out.println(success);
-            System.out.println(failure);
         }
+//        for (int i = 0; i < 1000; i++) {
+//            try {
+//                performPostRequest();
+//            } catch (Exception e) {
+//                System.err.println("POST failed");
+//            }
+//        }
     }
     private void performPostRequest() throws ApiException {
         File image = new File("C:\\Users\\theke\\OneDrive\\Pictures\\nmtb.png"); // File |
-        AlbumsProfile profile = new AlbumsProfile(); // AlbumsProfile |
+        AlbumsProfile profile = new AlbumsProfile().artist("Artist").title("Title").year("Year"); // AlbumsProfile |
         int tries = 0;
         while (tries < MAX_TRIES) {
             try {
                 int response = apiInstance.newAlbumWithHttpInfo(image, profile).getStatusCode();
+                System.out.println(response);
                 if (response == 200) {
                     this.success.incrementAndGet();
                     return;
@@ -75,6 +72,7 @@ public class RunningThread implements Runnable{
         while (tries < MAX_TRIES) {
             try {
                 int response = apiInstance.getAlbumByKeyWithHttpInfo(albumID).getStatusCode();
+                System.out.println(response);
                 if (response == 200) {
                     this.success.incrementAndGet();
                     return;

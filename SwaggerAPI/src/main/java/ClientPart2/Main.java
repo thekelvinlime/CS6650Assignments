@@ -11,6 +11,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
@@ -49,13 +52,13 @@ public class Main {
     }
     public static void main(String[] args) throws InterruptedException, IOException {
         int threadGroupSize = 10;
-        int numThreadGroups = 30;
-        int delay = 2000;
+        int numThreadGroups = 10;
+        int delay = 2;
 
 //        String urlGo = "http://localhost:8082";
-        String urlGo = "http://34.219.6.97:8082";
+        String urlGo = "http://54.202.149.227:8082";
 //        String urlJava = "http://localhost:8080/AlbumApp_Web";
-        String urlJava = "http://34.219.6.97:8080/AlbumApp_Web";
+        String urlJava = "http://54.202.149.227:8080/AlbumApp_Web";
 
         String csv = "C:\\Users\\theke\\OneDrive\\Desktop\\CS6650_Scalable_Distributed_Systems\\Assignment01\\data.csv";
 
@@ -83,6 +86,17 @@ public class Main {
         }
         waitForAllThreads(threads);
 
+//        for (int i = 0; i < numThreadGroups; i++) {
+//            ExecutorService threadPool = Executors.newFixedThreadPool(threadGroupSize);
+//            System.out.println("i "+i);
+//            for (int j = 0; j < threadGroupSize; j++) {
+//                RunningThread rt = new RunningThread(urlJava, csv, getLatencies, postLatencies, success, failure);
+//                threadPool.execute(rt);
+//            }
+//            threadPool.shutdown();
+//            threadPool.awaitTermination(delay, TimeUnit.SECONDS);
+//        }
+
 
         long finish = System.nanoTime();
         totalNumberOfRequests = success.get() + failure.get();
@@ -92,7 +106,7 @@ public class Main {
 
         Collections.sort(getLatencies);
         printResponseTimeCalculations(getLatencies, "GET");
-//        printResponseTimeCalculations(postLatencies, "POST");
+        printResponseTimeCalculations(postLatencies, "POST");
 
         System.out.println("Successful: " + success.get());
         System.out.println("Failed: " + failure.get());

@@ -1,7 +1,9 @@
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.swagger.client.model.AlbumInfo;
+import dao.AlbumsProfileDao;
+import dao.ImageMetaDataDao;
+import io.swagger.client.model.AlbumsProfile;
 import io.swagger.client.model.ImageMetaData;
 
 import javax.servlet.ServletException;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.IOException;
 
+import java.sql.SQLException;
 import java.util.regex.Pattern;
 
 @WebServlet(name = "AlbumsServlet", value = "/albums/*")
@@ -21,6 +24,8 @@ import java.util.regex.Pattern;
         maxRequestSize = 1024 * 1024 * 100)
 public class AlbumsServlet extends HttpServlet {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    protected ImageMetaDataDao imageMetaDataDao;
+    protected AlbumsProfileDao albumsProfileDao;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -37,9 +42,18 @@ public class AlbumsServlet extends HttpServlet {
             response.getWriter().print("Invalid id");
         } else {
             response.setStatus(HttpServletResponse.SC_OK);
-            String json = gson.toJson(new AlbumInfo().artist("Sex Pistols").title("Never Mind The Bollocks").year("1997"));
-
-            response.getWriter().write(json);
+            String albumIdString = urlPath.split("/")[1];
+//            String albumIdString = request.getParameter("albumId");
+            int albumId = Integer.parseInt(albumIdString);
+            try {
+                albumsProfileDao = AlbumsProfileDao.getInstance();
+                AlbumsProfile albumsProfile = albumsProfileDao.getAlbumInfoById(albumId);
+                String json = gson.toJson(albumsProfile);
+                response.getWriter().write(json);
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+                response.getOutputStream().flush();
+            }
         }
 
     }
@@ -64,16 +78,19 @@ public class AlbumsServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
-        String urlPath = request.getPathInfo();
-        String servletPath = request.getServletPath();
+//        String urlPath = request.getPathInfo();
+//        String servletPath = request.getServletPath();
 
         try {
             Part imagePart = request.getPart("image");
-            String albumId = request.getParameter("albumId");
+//            String albumId = request.getParameter("albumId");
             long imageSize = imagePart.getSize();
 //            ErrorMsg errorMsg;
             response.setStatus(HttpServletResponse.SC_OK);
-            String json = gson.toJson(new ImageMetaData().albumID(albumId).imageSize(String.valueOf(imageSize)));
+            ImageMetaData imageMetaData = new ImageMetaData().albumID("1").imageSize(String.valueOf(imageSize));
+            imageMetaDataDao = ImageMetaDataDao.getInstance();
+            imageMetaData = imageMetaDataDao.create(imageMetaData);
+            String json = gson.toJson(imageMetaData);
             response.getWriter().write(json);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -88,7 +105,7 @@ public class AlbumsServlet extends HttpServlet {
      * Enum constants that represent different possible endpoints
      */
     private enum Endpoint {
-        POST_NEW_ALBUM(Pattern.compile("/album")),
+        POST_NEW_ALBUM(Pattern.compile("/albums")),
         GET_ALBUM_BY_KEY(Pattern.compile("^/\\d+$")); // Atm expects an int ID, will change in later assignments
 
         public final Pattern pattern;

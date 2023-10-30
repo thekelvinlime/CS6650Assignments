@@ -30,9 +30,9 @@ public class Main {
         int delay = 2000;
 
 //        String urlGo = "http://localhost:8082";
-        String urlGo = "http://35.166.110.135:8082";
+        String urlGo = "http://54.202.149.227:8082";
+        String urlJava = "http://54.202.149.227:8080/AlbumApp_Web";
 //        String urlJava = "http://localhost:8080/AlbumApp_Web";
-        String urlJava = "http://35.166.110.135:8080/AlbumApp_Web";
 
 
         success = new AtomicInteger(0);
@@ -47,7 +47,7 @@ public class Main {
         for (int i = 0; i < numThreadGroups; i++) {
             threadGroups[i] = new ThreadGroup("Group" + i);
             for (int j = 0; j < threadGroupSize; j++) {
-                RunningThread rt = new RunningThread(urlGo, success, failure);
+                RunningThread rt = new RunningThread(urlJava, success, failure);
 //                RunningThread rt = new RunningThread(urlJava, success, failure);
                 threads[i * threadGroupSize + j] = new Thread(threadGroups[i], rt);
                 threads[i * threadGroupSize + j].start();

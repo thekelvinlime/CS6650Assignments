@@ -39,15 +39,9 @@ public class RunningThread implements Runnable{
         for (int i = 0; i < 1000; i++) {
             try {
                 performGetRequest();
-            } catch (Exception e) {
-                System.err.println("GET failed");
-            }
-        }
-        for (int i = 0; i < 1000; i++) {
-            try {
                 performPostRequest();
             } catch (Exception e) {
-                System.err.println("POST failed");
+                System.err.println("Requests failed");
             }
         }
     }
@@ -56,7 +50,7 @@ public class RunningThread implements Runnable{
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         String formattedTimestamp = sdf.format(new Date(start));
         File image = new File("C:\\Users\\theke\\OneDrive\\Pictures\\nmtb.png"); // File |
-        AlbumsProfile profile = new AlbumsProfile(); // AlbumsProfile |
+        AlbumsProfile profile = new AlbumsProfile().artist("Artist").title("Title").year("Year"); // AlbumsProfile |
         int tries = 0;
         String failedResponse = "";
         int response = 0;
@@ -68,7 +62,7 @@ public class RunningThread implements Runnable{
                     long finish = System.nanoTime() / 1000000;
                     long latency = (finish - start);
                     this.postLatencies.add(latency);
-                    writeToCsv(String.valueOf(start/1000), String.valueOf(this.success),"POST",String.valueOf(latency),String.valueOf(response));
+//                    writeToCsv(String.valueOf(start/1000), String.valueOf(this.success),"POST",String.valueOf(latency),String.valueOf(response));
                     return;
                 }
             } catch (Exception e) {
@@ -81,7 +75,7 @@ public class RunningThread implements Runnable{
         long finish = System.nanoTime()/1000000;
         long latency = (finish - start);
         this.postLatencies.add(latency);
-        writeToCsv(String.valueOf(start/1000), String.valueOf(this.success),"POST",String.valueOf(latency),failedResponse);
+//        writeToCsv(String.valueOf(start/1000), String.valueOf(this.success),"POST",String.valueOf(latency),failedResponse);
     }
 
     private void performGetRequest() throws ApiException {
@@ -99,7 +93,7 @@ public class RunningThread implements Runnable{
                     this.success.incrementAndGet();
                     long finish = System.nanoTime() / 1000000;
                     long latency = (finish - start);
-                    writeToCsv(String.valueOf(start/1000), String.valueOf(this.success),"GET",String.valueOf(latency),String.valueOf(response));
+//                    writeToCsv(String.valueOf(start/1000), String.valueOf(this.success),"GET",String.valueOf(latency),String.valueOf(response));
                     this.getLatencies.add(latency);
                     return;
                 }
@@ -112,7 +106,7 @@ public class RunningThread implements Runnable{
         long finish = System.nanoTime()/1000000;
         long latency = (finish - start);
         this.getLatencies.add(latency);
-        writeToCsv(String.valueOf(start/1000), String.valueOf(this.success),"GET",String.valueOf(latency),failedResponse);
+//        writeToCsv(String.valueOf(start/1000), String.valueOf(this.success),"GET",String.valueOf(latency),failedResponse);
     }
 
     private void writeToCsv(String timestamp, String successful, String responseType, String latency, String response) {
