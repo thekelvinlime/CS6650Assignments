@@ -9,7 +9,7 @@ public class SQLConnectionPool {
 
         // Optional configuration settings (you can adjust these as needed)
         config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        config.setMaximumPoolSize(10); // Set the maximum number of connections in the pool
+        config.setMaximumPoolSize(19); // Set the maximum number of connections in the pool
         config.setAutoCommit(true); // Set auto-commit behavior
         // Add more settings as needed
 
