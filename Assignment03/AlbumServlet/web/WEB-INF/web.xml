@@ -12,4 +12,14 @@
         <servlet-name>AlbumsServlet</servlet-name>
         <url-pattern>/albums/*</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ReviewsServlet</servlet-name>
+        <servlet-class>ReviewsServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ReviewsServlet</servlet-name>
+        <url-pattern>/review/*</url-pattern>
+    </servlet-mapping>
 </web-app>
