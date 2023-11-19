@@ -64,15 +64,32 @@ public class ReviewsServlet extends HttpServlet {
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
             System.out.println("Received Message" + message);
-            insertLikesDislikes(albumId);
+            insertLike(albumId);
+            insertLike(albumId);
+            insertDisLike(albumId);
         };
         channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> {});
 
     }
 
-    private void insertLikesDislikes(int albumId) {
+    private void insertLike(int albumId) {
         String updateLikesAndDislikes =
-                "UPDATE AlbumLikesDislikes SET likes = likes + 2, dislikes = dislikes + 1 " +
+                "UPDATE AlbumLikesDislikes SET likes = likes + 1, dislikes = dislikes + 1 " +
+                        "WHERE AlbumId=?";
+        PreparedStatement preparedStatement = null;
+        ResultSet resultKey = null;
+        try (java.sql.Connection connection = this.connectionPool.getConnection()) {
+            preparedStatement = connection.prepareStatement(updateLikesAndDislikes);
+            preparedStatement.setInt(1, albumId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void insertDisLike(int albumId) {
+        String updateLikesAndDislikes =
+                "UPDATE AlbumLikesDislikes SET dislikes = dislikes + 1 " +
                         "WHERE AlbumId=?";
         PreparedStatement preparedStatement = null;
         ResultSet resultKey = null;

@@ -88,18 +88,17 @@ public class AlbumsServlet extends HttpServlet {
 //            String json = gson.toJson(new ImageMetaData().albumID(albumIdString).imageSize(String.valueOf(imageSize)));
 //            response.getWriter().write(json);
             String insertImageMetaData =
-                    "INSERT INTO ImageMetaData(ImageSize,AlbumId) " +
+                            "INSERT INTO ImageMetaData(ImageSize,AlbumId) " +
                             "VALUES(?,?);";
 
             PreparedStatement preparedStatement = null;
             ResultSet resultKey = null;
             try (Connection connection = this.connectionPool.getConnection()) {
-                int albumId = 1;
+                int albumId = createAlbumId();
                 preparedStatement = connection.prepareStatement(insertImageMetaData, Statement.RETURN_GENERATED_KEYS);
                 preparedStatement.setString(1, String.valueOf(imageSize));
 //            insertStmt.setString(2, imageMetaData.getAlbumID());
                 preparedStatement.setInt(2, albumId);
-                preparedStatement.executeUpdate();
                 preparedStatement.executeUpdate();
 
                 resultKey = preparedStatement.getGeneratedKeys();
@@ -116,6 +115,30 @@ public class AlbumsServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             response.getOutputStream().flush();
+        }
+    }
+
+    private int createAlbumId() {
+        String insertAlbumInfo =
+                "INSERT INTO Albums(Artist,Title,Year) " + "VALUES(?,?,?);";
+        PreparedStatement preparedStatement = null;
+        ResultSet resultKey = null;
+        try (Connection connection = this.connectionPool.getConnection()) {
+            preparedStatement = connection.prepareStatement(insertAlbumInfo, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1, "Artist");
+            preparedStatement.setString(1, "Title");
+            preparedStatement.setString(1, "Year");
+            preparedStatement.executeUpdate();
+            resultKey = preparedStatement.getGeneratedKeys();
+            int albumId = -1;
+            if (resultKey.next()) {
+                albumId = resultKey.getInt(1);
+                return albumId;
+            } else {
+                throw new SQLException("Unable to retrieve auto-generated key.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

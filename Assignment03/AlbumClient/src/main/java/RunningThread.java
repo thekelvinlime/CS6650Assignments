@@ -28,21 +28,21 @@ public class RunningThread implements Runnable{
         this.postLatencies = postLatencies;
     }
     public void run() {
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
             try {
-                performPostLikeReviewRequest();
-                performPostLikeReviewRequest();
-                performPostDisLikeReviewRequest();
-                performPostAlbumRequest();
+                int albumId = performPostAlbumRequest();
+                performPostLikeReviewRequest(String.valueOf(albumId));
+                performPostLikeReviewRequest(String.valueOf(albumId));
+                performPostDisLikeReviewRequest(String.valueOf(albumId));
                 System.out.println(success);
             } catch (Exception e) {
                 System.err.println("Request failed");
             }
         }
     }
-    private void performPostLikeReviewRequest() throws ApiException {
+    private void performPostLikeReviewRequest(String albumID) throws ApiException {
         long start = System.nanoTime();
-        String albumID = "1"; // String | path  parameter is album key to retrieve
+//        String albumID = "1"; // String | path  parameter is album key to retrieve
         int tries = 0;
         while (tries < MAX_TRIES) {
             try {
@@ -63,9 +63,9 @@ public class RunningThread implements Runnable{
         this.failure.incrementAndGet();
     }
 
-    private void performPostDisLikeReviewRequest() throws ApiException {
+    private void performPostDisLikeReviewRequest(String albumID) throws ApiException {
         long start = System.nanoTime();
-        String albumID = "1"; // String | path  parameter is album key to retrieve
+//        String albumID = "1"; // String | path  parameter is album key to retrieve
         int tries = 0;
         while (tries < MAX_TRIES) {
             try {
@@ -86,22 +86,21 @@ public class RunningThread implements Runnable{
         this.failure.incrementAndGet();
     }
 
-    private void performPostAlbumRequest() throws ApiException {
+    private int performPostAlbumRequest() throws ApiException {
         long start = System.nanoTime();
         File image = new File("C:\\Users\\theke\\OneDrive\\Pictures\\nmtb.png"); // File |
         AlbumsProfile profile = new AlbumsProfile(); // AlbumsProfile |
         int tries = 0;
         while (tries < MAX_TRIES) {
             try {
-                int response = apiInstance.newAlbumWithHttpInfo(image, profile).getStatusCode();
+//                int response = apiInstance.newAlbumWithHttpInfo(image, profile).getStatusCode();
+                int albumId = Integer.parseInt(apiInstance.newAlbumWithHttpInfo(image, profile).getData().getAlbumID());
 //                System.out.println(response);
-                if (response == 200) {
-                    this.success.incrementAndGet();
-                    long finish = System.nanoTime();
-                    long latency = (finish - start);
-                    this.postLatencies.add(latency);
-                    return;
-                }
+                this.success.incrementAndGet();
+                long finish = System.nanoTime();
+                long latency = (finish - start);
+                this.postLatencies.add(latency);
+                return albumId;
             } catch (Exception e) {
                 tries++;
                 System.err.println("Attempt #" + tries + " failed");
@@ -109,6 +108,7 @@ public class RunningThread implements Runnable{
 
         }
         this.failure.incrementAndGet();
+        return tries;
     }
 
 }
