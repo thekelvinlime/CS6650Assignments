@@ -22,15 +22,30 @@ import com.rabbitmq.client.*;
         maxRequestSize = 1024 * 1024 * 100)
 public class ReviewsServlet extends HttpServlet {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private final static String QUEUE_NAME = "LikeAndDislike";
     private HikariDataSource connectionPool;
+    private Connection rbmqConnection;
+    private Channel channel;
 
 
     public void init() {
         connectionPool =  SQLConnectionPool.createDataSource();
+        rbmqConnection = RabbitMQConnection.createConnection();
+        try {
+            channel = rbmqConnection.createChannel();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void destroy() {
         connectionPool.close();
+        try {
+            channel.close();
+            rbmqConnection.close();
+        } catch (IOException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -46,9 +61,17 @@ public class ReviewsServlet extends HttpServlet {
         String action = urlPath.split("/")[1];
         String albumIdString = urlPath.split("/")[2];
         int albumId = Integer.parseInt(albumIdString);
-
-        if (action.equals("like")) insertLike(albumId);
-        else insertDisLike(albumId);
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        String message;
+        if (action.equals("like")) {
+            insertLike(albumId);
+            message = "AlbumID " + albumIdString + " +1 " + "like";
+        } else {
+            insertDisLike(albumId);
+            message = "AlbumID " + albumIdString + " +1 " + "dislike";
+        }
+        channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
+        System.out.println(" [x] Sent '" + message + "'");
     }
 
     private void insertLike(int albumId) {
