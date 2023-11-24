@@ -1,11 +1,9 @@
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.*;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.DefaultApi;
 import io.swagger.client.api.LikeApi;
 import io.swagger.client.model.AlbumsProfile;
+import io.swagger.client.model.ImageMetaData;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,59 +37,24 @@ public class RunningThread implements Runnable{
         connection = factory.newConnection();
     }
     public void run() {
-        for (int i = 0; i < 100; i++) {
-            try {
-                int albumId = performPostAlbumRequest();
-                performPostLikeReviewRequest(String.valueOf(albumId));
-                performPostLikeReviewRequest(String.valueOf(albumId));
-                performPostDisLikeReviewRequest(String.valueOf(albumId));
-                System.out.println(success);
-            } catch (Exception e) {
-                System.err.println("Request failed");
+        try {
+            for (int i = 0; i < 100; i++) {
+                performPostAlbumRequest();
+                performPostLikeReviewRequest(1);
+                performPostLikeReviewRequest(1);
+                performPostDisLikeReviewRequest(1);
             }
+        } catch (ApiException e) {
+            throw new RuntimeException(e);
         }
     }
-    private void performPostLikeReviewRequest(String albumID) throws ApiException {
+    private void performPostLikeReviewRequest(int albumId) throws ApiException {
         long start = System.nanoTime();
-//        String albumID = "1"; // String | path  parameter is album key to retrieve
+        String albumIdString = String.valueOf(albumId); // String | path  parameter is album key to retrieve
         int tries = 0;
         while (tries < MAX_TRIES) {
             try {
-                final Channel channel = connection.createChannel();
-                channel.queueDeclare(QUEUE_NAME, true, false, false, null);
-                channel.basicQos(1);
-                System.out.println(" [x] Receiving messages. To exit press CTRL+C");
-                int response = apiInstance2.reviewWithHttpInfo("like", albumID).getStatusCode();
-//                System.out.println(response);
-                if (response == 200) {
-                    DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-                        String message = new String(delivery.getBody(), "UTF-8");
-                        channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-                        System.out.println( "Callback thread ID = " + Thread.currentThread().getId() + " Received '" + message + "'");
-                    };
-                    channel.basicConsume(QUEUE_NAME, false, deliverCallback, consumerTag -> { });
-                    this.success.incrementAndGet();
-                    long finish = System.nanoTime();
-                    long latency = (finish - start);
-                    this.getLatencies.add(latency);
-                    return;
-                }
-            } catch (Exception e) {
-                tries++;
-                System.err.println("Attempt #" + tries + " failed");
-            }
-        }
-        this.failure.incrementAndGet();
-    }
-
-    private void performPostDisLikeReviewRequest(String albumID) throws ApiException {
-        long start = System.nanoTime();
-//        String albumID = "1"; // String | path  parameter is album key to retrieve
-        int tries = 0;
-        while (tries < MAX_TRIES) {
-            try {
-                int response = apiInstance2.reviewWithHttpInfo("not", albumID).getStatusCode();
-//                System.out.println(response);
+                int response = apiInstance2.reviewWithHttpInfo("like", albumIdString).getStatusCode();
                 if (response == 200) {
                     this.success.incrementAndGet();
                     long finish = System.nanoTime();
@@ -107,21 +70,45 @@ public class RunningThread implements Runnable{
         this.failure.incrementAndGet();
     }
 
-    private int performPostAlbumRequest() throws ApiException {
+    private void performPostDisLikeReviewRequest(int albumId) throws ApiException {
+        long start = System.nanoTime();
+        String albumIdString = String.valueOf(albumId); // String | path  parameter is album key to retrieve
+        int tries = 0;
+        while (tries < MAX_TRIES) {
+            try {
+                int response = apiInstance2.reviewWithHttpInfo("dislike", albumIdString).getStatusCode();
+                if (response == 200) {
+                    this.success.incrementAndGet();
+                    long finish = System.nanoTime();
+                    long latency = (finish - start);
+                    this.getLatencies.add(latency);
+                    return;
+                }
+            } catch (Exception e) {
+                tries++;
+                System.err.println("Attempt #" + tries + " failed");
+            }
+        }
+        this.failure.incrementAndGet();
+    }
+
+    private void performPostAlbumRequest() throws ApiException {
         long start = System.nanoTime();
         File image = new File("C:\\Users\\theke\\OneDrive\\Pictures\\nmtb.png"); // File |
         AlbumsProfile profile = new AlbumsProfile(); // AlbumsProfile |
         int tries = 0;
         while (tries < MAX_TRIES) {
             try {
-//                int response = apiInstance.newAlbumWithHttpInfo(image, profile).getStatusCode();
-                int albumId = Integer.parseInt(apiInstance.newAlbumWithHttpInfo(image, profile).getData().getAlbumID());
-//                System.out.println(response);
-                this.success.incrementAndGet();
-                long finish = System.nanoTime();
-                long latency = (finish - start);
-                this.postLatencies.add(latency);
-                return albumId;
+//                ImageMetaData imageMetaData = apiInstance.newAlbumWithHttpInfo(image, profile).getData();
+//                int albumId = Integer.parseInt(imageMetaData.getAlbumID());
+                int response = apiInstance.newAlbumWithHttpInfo(image, profile).getStatusCode();
+                if (response == 200) {
+                    this.success.incrementAndGet();
+                    long finish = System.nanoTime();
+                    long latency = (finish - start);
+                    this.postLatencies.add(latency);
+                    return;
+                }
             } catch (Exception e) {
                 tries++;
                 System.err.println("Attempt #" + tries + " failed");
@@ -129,7 +116,6 @@ public class RunningThread implements Runnable{
 
         }
         this.failure.incrementAndGet();
-        return tries;
     }
 
 }

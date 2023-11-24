@@ -22,7 +22,7 @@ public class Main {
 //        String urlJava = "http://54.191.67.226:8080/AlbumServlet_Web";
 //        String urlJava = "http://52.11.56.34:8080/AlbumServlet_Web";
 //        String urlJava = "http://ApplicationLoadBalancer-1040454443.us-west-2.elb.amazonaws.com/AlbumServlet_Web";
-        String urlJava = "http://localhost:8080/AlbumServlet_Web";
+        String urlJava = "http://localhost:8080/AlbumServlet_Web_exploded";
 
         success = new AtomicInteger(0);
         failure = new AtomicInteger(0);
@@ -53,10 +53,10 @@ public class Main {
         throughput = (double) totalNumberOfRequests/wallTime;
         Collections.sort(getLatencies);
 
-        printResponseTimeCalculations(getLatencies, "GET");
-        printResponseTimeCalculations(postLatencies, "POST");
-        System.out.println("Successful: " + success.get());
-        System.out.println("Failed: " + failure.get());
+//        printResponseTimeCalculations(getLatencies, "GET");
+//        printResponseTimeCalculations(postLatencies, "POST");
+//        System.out.println("Successful: " + success.get());
+//        System.out.println("Failed: " + failure.get());
         System.out.println("Total Requests: " + totalNumberOfRequests + " requests");
         System.out.println("Wall Time: " + wallTime + " s");
         System.out.println("Throughput: " + throughput + " requests/sec");

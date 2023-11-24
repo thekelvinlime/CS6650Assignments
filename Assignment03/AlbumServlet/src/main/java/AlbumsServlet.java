@@ -95,6 +95,7 @@ public class AlbumsServlet extends HttpServlet {
             ResultSet resultKey = null;
             try (Connection connection = this.connectionPool.getConnection()) {
                 int albumId = createAlbumId();
+//                int albumId = 1;
                 preparedStatement = connection.prepareStatement(insertImageMetaData, Statement.RETURN_GENERATED_KEYS);
                 preparedStatement.setString(1, String.valueOf(imageSize));
 //            insertStmt.setString(2, imageMetaData.getAlbumID());
@@ -126,8 +127,8 @@ public class AlbumsServlet extends HttpServlet {
         try (Connection connection = this.connectionPool.getConnection()) {
             preparedStatement = connection.prepareStatement(insertAlbumInfo, Statement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, "Artist");
-            preparedStatement.setString(1, "Title");
-            preparedStatement.setString(1, "Year");
+            preparedStatement.setString(2, "Title");
+            preparedStatement.setString(3, "Year");
             preparedStatement.executeUpdate();
             resultKey = preparedStatement.getGeneratedKeys();
             int albumId = -1;

@@ -56,32 +56,34 @@ public class ReviewsServlet extends HttpServlet {
         response.setContentType("application/json");
         String urlPath = request.getPathInfo();
 
-        // Consume message in servlet, Publish message in client
         String action = urlPath.split("/")[1];
         String albumIdString = urlPath.split("/")[2];
+
         int albumId = Integer.parseInt(albumIdString);
-        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+//        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
         String message;
         if (action.equals("like")) {
             insertLike(albumId);
-            message = "AlbumID " + albumIdString + " +1 " + "like";
-        } else {
+//            message = "AlbumID " + albumIdString + " +1 " + "like";
+        }
+
+        if (action.equals("dislike")) {
             insertDisLike(albumId);
-            message = "AlbumID " + albumIdString + " +1 " + "dislike";
+//            message = "AlbumID " + albumIdString + " +1 " + "dislike";
         }
-        channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
-        System.out.println(" [x] Sent '" + message + "'");
-        try {
-            channel.close();
-        } catch (TimeoutException e) {
-            throw new RuntimeException(e);
-        }
+//        channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
+//        System.out.println(" [x] Sent '" + message + "'");
+//        try {
+//            channel.close();
+//        } catch (TimeoutException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     private void insertLike(int albumId) {
         String updateLikes =
-                "UPDATE AlbumReviews SET likes = likes + 1" +
-                        "WHERE AlbumId=?";
+                "INSERT INTO AlbumReviews (albumId, likes, dislikes)" +
+                        "VALUES (?, 1, 0)" + "ON DUPLICATE KEY UPDATE likes = likes + 1";
         PreparedStatement preparedStatement = null;
         ResultSet resultKey = null;
         try (java.sql.Connection connection = this.connectionPool.getConnection()) {
@@ -95,8 +97,8 @@ public class ReviewsServlet extends HttpServlet {
 
     private void insertDisLike(int albumId) {
         String updateDislikes =
-                "UPDATE AlbumReviews SET dislikes = dislikes + 1 " +
-                        "WHERE AlbumId=?";
+                "INSERT INTO AlbumReviews (albumId, likes, dislikes)" +
+                        "VALUES (?, 0, 1)" + "ON DUPLICATE KEY UPDATE dislikes = dislikes + 1";
         PreparedStatement preparedStatement = null;
         ResultSet resultKey = null;
         try (java.sql.Connection connection = this.connectionPool.getConnection()) {
