@@ -1,7 +1,12 @@
 
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.OptionalDouble;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
@@ -9,15 +14,15 @@ public class Main {
     private static ArrayList<Long> getLatencies;
     private static ArrayList<Long> postLatencies;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException, TimeoutException {
         int threadGroupSize = Integer.parseInt(args[0]);
         int numThreadGroups = Integer.parseInt(args[1]);
         int delay = Integer.parseInt(args[2]);
 
 //        String urlJava = "http://54.191.67.226:8080/AlbumServlet_Web";
 //        String urlJava = "http://52.11.56.34:8080/AlbumServlet_Web";
-        String urlJava = "http://ApplicationLoadBalancer-1040454443.us-west-2.elb.amazonaws.com/AlbumServlet_Web";
-//        String urlJava = "http://localhost:8080/AlbumServlet_Web";
+//        String urlJava = "http://ApplicationLoadBalancer-1040454443.us-west-2.elb.amazonaws.com/AlbumServlet_Web";
+        String urlJava = "http://localhost:8080/AlbumServlet_Web";
 
         success = new AtomicInteger(0);
         failure = new AtomicInteger(0);

@@ -22,7 +22,7 @@ import com.rabbitmq.client.*;
         maxRequestSize = 1024 * 1024 * 100)
 public class ReviewsServlet extends HttpServlet {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final static String QUEUE_NAME = "LikeAndDislike";
+    private final static String QUEUE_NAME = "ReviewQ";
     private HikariDataSource connectionPool;
     private Connection rbmqConnection;
     private Channel channel;
@@ -41,9 +41,8 @@ public class ReviewsServlet extends HttpServlet {
     public void destroy() {
         connectionPool.close();
         try {
-            channel.close();
             rbmqConnection.close();
-        } catch (IOException | TimeoutException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -72,16 +71,21 @@ public class ReviewsServlet extends HttpServlet {
         }
         channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
         System.out.println(" [x] Sent '" + message + "'");
+        try {
+            channel.close();
+        } catch (TimeoutException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void insertLike(int albumId) {
-        String updateLikesAndDislikes =
-                "UPDATE AlbumLikesDislikes SET likes = likes + 1" +
+        String updateLikes =
+                "UPDATE AlbumReviews SET likes = likes + 1" +
                         "WHERE AlbumId=?";
         PreparedStatement preparedStatement = null;
         ResultSet resultKey = null;
         try (java.sql.Connection connection = this.connectionPool.getConnection()) {
-            preparedStatement = connection.prepareStatement(updateLikesAndDislikes);
+            preparedStatement = connection.prepareStatement(updateLikes);
             preparedStatement.setInt(1, albumId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -90,13 +94,13 @@ public class ReviewsServlet extends HttpServlet {
     }
 
     private void insertDisLike(int albumId) {
-        String updateLikesAndDislikes =
-                "UPDATE AlbumLikesDislikes SET dislikes = dislikes + 1 " +
+        String updateDislikes =
+                "UPDATE AlbumReviews SET dislikes = dislikes + 1 " +
                         "WHERE AlbumId=?";
         PreparedStatement preparedStatement = null;
         ResultSet resultKey = null;
         try (java.sql.Connection connection = this.connectionPool.getConnection()) {
-            preparedStatement = connection.prepareStatement(updateLikesAndDislikes);
+            preparedStatement = connection.prepareStatement(updateDislikes);
             preparedStatement.setInt(1, albumId);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

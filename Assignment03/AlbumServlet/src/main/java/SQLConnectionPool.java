@@ -3,7 +3,8 @@ import com.zaxxer.hikari.HikariDataSource;
 public class SQLConnectionPool {
     public static HikariDataSource createDataSource() {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:mysql://assignment2.c8smjzr6a1hx.us-west-2.rds.amazonaws.com:3306/Assignment2");
+//        config.setJdbcUrl("jdbc:mysql://assignment2.c8smjzr6a1hx.us-west-2.rds.amazonaws.com:3306/Assignment2");
+        config.setJdbcUrl("jdbc:mysql://localhost:3306/Assignment2");
         config.setUsername("root");
         config.setPassword("password");
 
