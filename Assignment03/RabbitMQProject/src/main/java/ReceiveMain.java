@@ -6,21 +6,35 @@ import com.rabbitmq.client.DeliverCallback;
 import java.nio.charset.StandardCharsets;
 
 public class ReceiveMain {
-    private final static String QUEUE_NAME = "LikeAndDislike";
+    public static void main(String[] args) throws Exception {
+        int threadGroupSize = Integer.parseInt(args[0]);
+        int numThreadGroups = Integer.parseInt(args[1]);
+        int delay = Integer.parseInt(args[2]);
 
-    public static void main(String[] argv) throws Exception {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
+        final ConnectionFactory factory = new ConnectionFactory();
+        final Connection connection = factory.newConnection();
 
-        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-        System.out.println(" [*] Waiting for messages. To exit press CTRL+C");
+        ThreadGroup[] threadGroups = new ThreadGroup[numThreadGroups];
+        Thread[] threads = new Thread[numThreadGroups * threadGroupSize];
+        for (int i = 0; i < numThreadGroups; i++) {
+            threadGroups[i] = new ThreadGroup("Group" + i);
+            for (int j = 0; j < threadGroupSize; j++) {
+                ReceiveRunnable receiveRunnable = new ReceiveRunnable(connection);
+                threads[i * threadGroupSize + j] = new Thread(threadGroups[i], receiveRunnable);
+                threads[i * threadGroupSize + j].start();
+            }
+            Thread.sleep(delay);
+        }
+        waitForAllThreads(threads);
+    }
 
-        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-            System.out.println(" [x] Received '" + message + "'");
-        };
-        channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> { });
+    public static void waitForAllThreads(Thread[] threads) {
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

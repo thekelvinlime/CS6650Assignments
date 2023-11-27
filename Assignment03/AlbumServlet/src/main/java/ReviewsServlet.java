@@ -61,7 +61,7 @@ public class ReviewsServlet extends HttpServlet {
 
         int albumId = Integer.parseInt(albumIdString);
 //        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-        String message;
+//        String message = null;
         if (action.equals("like")) {
             insertLike(albumId);
 //            message = "AlbumID " + albumIdString + " +1 " + "like";
