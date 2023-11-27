@@ -24,25 +24,29 @@ public class ReviewsServlet extends HttpServlet {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final static String QUEUE_NAME = "ReviewQ";
     private HikariDataSource connectionPool;
-    private Connection rbmqConnection;
+    private ConnectionFactory factory;
+    private Connection connection;
     private Channel channel;
 
 
     public void init() {
         connectionPool =  SQLConnectionPool.createDataSource();
-        rbmqConnection = RabbitMQConnection.createConnection();
+        factory = new ConnectionFactory();
         try {
-            channel = rbmqConnection.createChannel();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            connection = factory.newConnection();
+            channel = connection.createChannel();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     public void destroy() {
         connectionPool.close();
         try {
-            rbmqConnection.close();
+            channel.close();
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (TimeoutException e) {
             throw new RuntimeException(e);
         }
     }
@@ -60,19 +64,19 @@ public class ReviewsServlet extends HttpServlet {
         String albumIdString = urlPath.split("/")[2];
 
         int albumId = Integer.parseInt(albumIdString);
-//        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-//        String message = null;
+        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+        String message = null;
         if (action.equals("like")) {
             insertLike(albumId);
-//            message = "AlbumID " + albumIdString + " +1 " + "like";
+            message = "AlbumID " + albumIdString + " +1 " + "like";
         }
 
         if (action.equals("dislike")) {
             insertDisLike(albumId);
-//            message = "AlbumID " + albumIdString + " +1 " + "dislike";
+            message = "AlbumID " + albumIdString + " +1 " + "dislike";
         }
-//        channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
-//        System.out.println(" [x] Sent '" + message + "'");
+        channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
+        System.out.println(" [x] Sent '" + message + "'");
 //        try {
 //            channel.close();
 //        } catch (TimeoutException e) {
