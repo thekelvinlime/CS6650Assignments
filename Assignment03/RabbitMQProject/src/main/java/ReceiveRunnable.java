@@ -28,7 +28,7 @@ public class ReceiveRunnable implements Runnable{
 
             DeliverCallback deliverCallback = (consumerTag, delivery) -> {
                 String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
-                channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                channel.basicAck(delivery.getEnvelope().getDeliveryTag(), true);
                 System.out.println( "Callback thread ID = " + Thread.currentThread().getId() + " Received '" + message + "'");
             };
             channel.basicConsume(QUEUE_NAME, false, deliverCallback, consumerTag -> { });
