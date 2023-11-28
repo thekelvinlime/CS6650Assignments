@@ -117,6 +117,7 @@ public class AlbumsServlet extends HttpServlet {
             e.printStackTrace();
             response.getOutputStream().flush();
         }
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     private int createAlbumId() {

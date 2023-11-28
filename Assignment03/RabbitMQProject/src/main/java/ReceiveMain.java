@@ -12,6 +12,7 @@ public class ReceiveMain {
         int delay = Integer.parseInt(args[2]);
 
         final ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
         final Connection connection = factory.newConnection();
 
         ThreadGroup[] threadGroups = new ThreadGroup[numThreadGroups];

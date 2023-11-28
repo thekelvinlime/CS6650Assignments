@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 import com.rabbitmq.client.*;
 
@@ -23,32 +23,38 @@ import com.rabbitmq.client.*;
 public class ReviewsServlet extends HttpServlet {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final static String QUEUE_NAME = "ReviewQ";
+    private final int POOL_SIZE = 100;
+    private BlockingQueue<Channel> channelPool;
+    private ExecutorService executorService;
+
     private HikariDataSource connectionPool;
-    private ConnectionFactory factory;
-    private Connection connection;
-    private Channel channel;
+//    private ConnectionFactory factory;
+//    private Connection connection;
 
 
     public void init() {
         connectionPool =  SQLConnectionPool.createDataSource();
-        factory = new ConnectionFactory();
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        channelPool = new LinkedBlockingQueue<>(POOL_SIZE);
+        //Added
         try {
-            connection = factory.newConnection();
-            channel = connection.createChannel();
+//            connection = factory.newConnection();
+            for (int i = 0; i < POOL_SIZE; i++) {
+                Connection connection = factory.newConnection();
+                Channel channel = connection.createChannel();
+                channel.queueDeclare(QUEUE_NAME, true, false, false, null);
+                channelPool.offer(channel);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        executorService = Executors.newFixedThreadPool(POOL_SIZE);
     }
 
     public void destroy() {
         connectionPool.close();
-        try {
-            channel.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (TimeoutException e) {
-            throw new RuntimeException(e);
-        }
+        executorService.shutdownNow();
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -64,7 +70,6 @@ public class ReviewsServlet extends HttpServlet {
         String albumIdString = urlPath.split("/")[2];
 
         int albumId = Integer.parseInt(albumIdString);
-        channel.queueDeclare(QUEUE_NAME, false, false, false, null);
         String message = null;
         if (action.equals("like")) {
             insertLike(albumId);
@@ -75,15 +80,32 @@ public class ReviewsServlet extends HttpServlet {
             insertDisLike(albumId);
             message = "AlbumID " + albumIdString + " +1 " + "dislike";
         }
-        channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
-        System.out.println(" [x] Sent '" + message + "'");
-//        try {
-//            channel.close();
-//        } catch (TimeoutException e) {
-//            throw new RuntimeException(e);
-//        }
+        if (message != null && !message.isEmpty()) {
+            String finalMessage = message;
+            executorService.submit(() -> sendMessage(finalMessage));
+        }
+
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
+    private void sendMessage(String message) {
+        Channel channel = null;
+        try {
+            channel = channelPool.poll(1, TimeUnit.SECONDS);
+            if (channel != null) {
+                channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
+                System.out.println(" [x] Sent '" + message + "'");
+            } else {
+                System.out.println("No channel available");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (channel != null) {
+                channelPool.offer(channel);
+            }
+        }
+    }
     private void insertLike(int albumId) {
         String updateLikes =
                 "INSERT INTO AlbumReviews (albumId, likes, dislikes)" +
