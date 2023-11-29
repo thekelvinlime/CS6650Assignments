@@ -1,5 +1,6 @@
 import com.rabbitmq.client.*;
 import io.swagger.client.ApiException;
+import io.swagger.client.ApiResponse;
 import io.swagger.client.api.DefaultApi;
 import io.swagger.client.api.LikeApi;
 import io.swagger.client.model.AlbumsProfile;
@@ -20,8 +21,8 @@ public class RunningThread implements Runnable{
     private ArrayList<Long> getLatencies;
     private ArrayList<Long> postLatencies;
     private String url;
-    private final static String QUEUE_NAME = "ReviewQ";
-    private final Connection connection;
+    private int postId;
+
 
     public RunningThread(String url, AtomicInteger success, AtomicInteger failure, ArrayList<Long> getLatencies, ArrayList<Long> postLatencies) throws IOException, TimeoutException {
         this.apiInstance = new DefaultApi();
@@ -32,17 +33,14 @@ public class RunningThread implements Runnable{
         this.failure = failure;
         this.getLatencies = getLatencies;
         this.postLatencies = postLatencies;
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        connection = factory.newConnection();
     }
     public void run() {
         try {
             for (int i = 0; i < 100; i++) {
                 performPostAlbumRequest();
-                performPostLikeReviewRequest(1);
-                performPostLikeReviewRequest(1);
-                performPostDisLikeReviewRequest(1);
+                performPostLikeReviewRequest(postId);
+                performPostLikeReviewRequest(postId);
+                performPostDisLikeReviewRequest(postId);
             }
         } catch (ApiException e) {
             throw new RuntimeException(e);
@@ -99,9 +97,11 @@ public class RunningThread implements Runnable{
         int tries = 0;
         while (tries < MAX_TRIES) {
             try {
-//                ImageMetaData imageMetaData = apiInstance.newAlbumWithHttpInfo(image, profile).getData();
+                ApiResponse apiResponse = apiInstance.newAlbumWithHttpInfo(image, profile);
+                ArrayList<String> list = (ArrayList<String>) apiResponse.getHeaders().get("ALBUMID");
+                postId = Integer.valueOf(list.get(0));
 //                int albumId = Integer.parseInt(imageMetaData.getAlbumID());
-                int response = apiInstance.newAlbumWithHttpInfo(image, profile).getStatusCode();
+                int response = apiResponse.getStatusCode();
                 if (response == 200) {
                     this.success.incrementAndGet();
                     long finish = System.nanoTime();
@@ -117,5 +117,31 @@ public class RunningThread implements Runnable{
         }
         this.failure.incrementAndGet();
     }
+
+//    private int performPostAlbumRequest() throws ApiException {
+//        long start = System.nanoTime();
+//        File image = new File("C:\\Users\\theke\\OneDrive\\Pictures\\nmtb.png"); // File |
+//        AlbumsProfile profile = new AlbumsProfile(); // AlbumsProfile |
+//        int tries = 0;
+//        while (tries < MAX_TRIES) {
+//            try {
+//                ImageMetaData imageMetaData = apiInstance.newAlbumWithHttpInfo(image, profile).getData();
+//                int albumId = Integer.parseInt(imageMetaData.getAlbumID());
+////                int response = apiInstance.newAlbumWithHttpInfo(image, profile).getStatusCode();
+//                this.success.incrementAndGet();
+//                long finish = System.nanoTime();
+//                long latency = (finish - start);
+//                this.postLatencies.add(latency);
+//                return albumId;
+//
+//            } catch (Exception e) {
+//                tries++;
+//                System.err.println("Attempt #" + tries + " failed");
+//            }
+//
+//        }
+//        this.failure.incrementAndGet();
+//        return 1;
+//    }
 
 }

@@ -26,16 +26,16 @@ public class ReviewsServlet extends HttpServlet {
     private final int POOL_SIZE = 100;
     private BlockingQueue<Channel> channelPool;
     private ExecutorService executorService;
-
     private HikariDataSource connectionPool;
-//    private ConnectionFactory factory;
-//    private Connection connection;
 
 
     public void init() {
         connectionPool =  SQLConnectionPool.createDataSource();
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
+//        factory.setHost("ec2-52-26-115-234.us-west-2.compute.amazonaws.com");
+//        factory.setUsername("guest");
+//        factory.setPassword("guest");
         channelPool = new LinkedBlockingQueue<>(POOL_SIZE);
         //Added
         try {

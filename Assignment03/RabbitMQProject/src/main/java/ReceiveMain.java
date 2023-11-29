@@ -13,6 +13,9 @@ public class ReceiveMain {
 
         final ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
+//        factory.setHost("ec2-52-26-115-234.us-west-2.compute.amazonaws.com");
+//        factory.setUsername("guest");
+//        factory.setPassword("guest");
         final Connection connection = factory.newConnection();
 
         ThreadGroup[] threadGroups = new ThreadGroup[numThreadGroups];
