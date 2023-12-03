@@ -87,9 +87,13 @@ public class AlbumsServlet extends HttpServlet {
 //            response.setStatus(HttpServletResponse.SC_OK);
 //            String json = gson.toJson(new ImageMetaData().albumID(albumIdString).imageSize(String.valueOf(imageSize)));
 //            response.getWriter().write(json);
+
             String insertImageMetaData =
                             "INSERT INTO ImageMetaData(ImageSize,AlbumId) " +
                             "VALUES(?,?);";
+//            String insertImageMetaData =
+//                    "INSERT INTO Albums(Artist, Title, Year, Image, ImageSize) " +
+//                    "VALUES(?,?,?,?,?);";
 
             PreparedStatement preparedStatement = null;
             ResultSet resultKey = null;

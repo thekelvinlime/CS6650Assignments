@@ -41,6 +41,9 @@ public class RunningThread implements Runnable{
                 performPostLikeReviewRequest(postId);
                 performPostLikeReviewRequest(postId);
                 performPostDisLikeReviewRequest(postId);
+//                performPostLikeReviewRequest(1);
+//                performPostLikeReviewRequest(1);
+//                performPostDisLikeReviewRequest(1);
             }
         } catch (ApiException e) {
             throw new RuntimeException(e);

@@ -19,10 +19,10 @@ public class Main {
         int numThreadGroups = Integer.parseInt(args[1]);
         int delay = Integer.parseInt(args[2]);
 
-//        String urlJava = "http://35.89.5.156:8080/AlbumServlet_Web";
+        String urlJava = "http://34.216.137.204:8080/AlbumServlet_Web";
 //        String urlJava = "http://52.11.56.34:8080/AlbumServlet_Web";
 //        String urlJava = "http://ApplicationLoadBalancer-1040454443.us-west-2.elb.amazonaws.com/AlbumServlet_Web";
-        String urlJava = "http://localhost:8080/AlbumServlet_Web_exploded";
+//        String urlJava = "http://localhost:8080/AlbumServlet_Web";
 
         success = new AtomicInteger(0);
         failure = new AtomicInteger(0);

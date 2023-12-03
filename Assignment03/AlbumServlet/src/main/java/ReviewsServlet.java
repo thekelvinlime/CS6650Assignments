@@ -32,10 +32,10 @@ public class ReviewsServlet extends HttpServlet {
     public void init() {
         connectionPool =  SQLConnectionPool.createDataSource();
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-//        factory.setHost("ec2-52-26-115-234.us-west-2.compute.amazonaws.com");
-//        factory.setUsername("guest");
-//        factory.setPassword("guest");
+//        factory.setHost("localhost");
+        factory.setHost("ec2-34-215-80-21.us-west-2.compute.amazonaws.com");
+        factory.setUsername("guest");
+        factory.setPassword("guest");
         channelPool = new LinkedBlockingQueue<>(POOL_SIZE);
         //Added
         try {
