@@ -15,6 +15,8 @@ import java.sql.SQLException;
 import java.util.concurrent.*;
 
 import com.rabbitmq.client.*;
+import io.swagger.client.model.AlbumsProfile;
+import io.swagger.client.model.Likes;
 
 @WebServlet(name = "ReviewsServlet", value = "/review/*")
 @MultipartConfig(fileSizeThreshold = 1024 * 1024 * 10,    // 10 MB
@@ -58,7 +60,35 @@ public class ReviewsServlet extends HttpServlet {
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("application/json");
+        String urlPath = request.getPathInfo();
+        String albumIdString = urlPath.split("/")[1];
 
+        String selectReview =
+                "SELECT AlbumId,Likes,Dislikes " +
+                        "FROM AlbumReviews " +
+                        "WHERE albumId=?;";
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try (java.sql.Connection connection = this.connectionPool.getConnection()) {
+            int albumId = Integer.parseInt(albumIdString);
+            preparedStatement = connection.prepareStatement(selectReview);
+            preparedStatement.setInt(1, albumId);
+            resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                int resultAlbumId = resultSet.getInt("AlbumId");
+                int resultLikes = resultSet.getInt("Likes");
+                int resultDislikes = resultSet.getInt("Dislikes");
+
+                response.setStatus(HttpServletResponse.SC_OK);
+                String json = gson.toJson(new Likes().likes(String.valueOf(resultLikes)).dislikes(String.valueOf(resultDislikes)));
+                response.getWriter().write(json);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
